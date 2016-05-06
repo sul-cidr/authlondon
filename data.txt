@@ -1,0 +1,3 @@
+"Sir Bill"	1800-10-15	"EE"	"Venice"
+"Miss Elliot"	1755-08-11	"GrTour"	"Pittsburgh, Pennsylvania"
+"Smith"	1655-01-30	"EE"	"New Amsterdam"
