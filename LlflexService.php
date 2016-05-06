@@ -1,31 +1,31 @@
-<?php 
-/** 
+<?php
+/**
  * This sample service contains functions that illustrate typical
- * service operations. This code is for prototyping only. 
- *  
- *  Authenticate users before allowing them to call these methods. 
- */ 
+ * service operations. This code is for prototyping only.
+ *
+ *  Authenticate users before allowing them to call these methods.
+ */
 
-class llflexService { 
+class llflexService {
   var $username = "gdhslitlondon"; 
-  var $password = "kuelahth"; 
-  var $server = "mysql-user.stanford.edu"; 
-  var $port = "3306"; 
-  var $databasename = "g_dhs_litlondon"; 
-  var $tablename = "entity"; 
-  
-  var $connection; 
-  public function __construct() { 
-    $this->connection = mysqli_connect( 
-                       $this->server,  
-                       $this->username,  
-                       $this->password, 
-                       $this->databasename, 
-                       $this->port 
-                       ); 
-    
-    $this->throwExceptionOnError($this->connection); 
-  } 
+  var $password = "kuelahth";
+  var $server = "mysql-user.stanford.edu";
+  var $port = "3306";
+  var $databasename = "g_dhs_litlondon";
+  var $tablename = "entity";
+
+  var $connection;
+  public function __construct() {
+    $this->connection = mysqli_connect(
+                       $this->server,
+                       $this->username,
+                       $this->password,
+                       $this->databasename,
+                       $this->port
+                       );
+
+    $this->throwExceptionOnError($this->connection);
+  }
 
   public function getEntities() {
      $stmt = mysqli_prepare($this->connection,
@@ -43,11 +43,11 @@ class llflexService {
 
 			LEFT JOIN type_entity
 			ON type_entity.unique_id = entity.type
-			
+
 			WHERE
 			entity.type = 236
-           ");     
-         
+           ");
+
       $this->throwExceptionOnError();
 
       mysqli_stmt_execute($stmt);
@@ -69,7 +69,7 @@ class llflexService {
 
       return $rows;
   }
-  
+
     public function getLocations() {
      $stmt = mysqli_prepare($this->connection,
           "
@@ -86,15 +86,15 @@ class llflexService {
 
 			LEFT JOIN type_entity
 			ON type_entity.unique_id = entity.type
-			
+
 			WHERE
 			entity.type = 20
-			
+
 			ORDER BY
 			entity.notes
-			
-           ");     
-         
+
+           ");
+
       $this->throwExceptionOnError();
 
       mysqli_stmt_execute($stmt);
@@ -113,27 +113,27 @@ class llflexService {
 
       $q = 0;
       while ($q < count($rows)) {
-      
+
       $damnname = $rows[$q]->name_vern;
       $newname = utf8_encode($damnname);
       $rows[$q]->name_vern = $newname;
       $q++;
-      
+
       }
-      
-      
+
+
       mysqli_stmt_free_result($stmt);
       mysqli_close($this->connection);
 
       return $rows;
-  }  
+  }
 
-  
-  
+
+
   public function getAttributes() {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
           	SELECT
 
 			attribute.unique_id,
@@ -165,8 +165,8 @@ class llflexService {
 
 			LEFT JOIN  type_attribute
 			ON type_attribute.unique_id = attribute.type
-          
-           
+
+
            ");
       $this->throwExceptionOnError();
 
@@ -202,13 +202,13 @@ class llflexService {
       mysqli_close($this->connection);
 
       return $rows;
-  }  
+  }
 
 
   public function getEntitiesByID($itemID) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
           SELECT DISTINCT
 
 		entity.unique_id,
@@ -229,11 +229,11 @@ class llflexService {
 
 		WHERE
 
-		entity.unique_id = ?  
+		entity.unique_id = ?
           "
      		);
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'i', $itemID);
       $this->throwExceptionOnError();
 
@@ -253,12 +253,12 @@ class llflexService {
       mysqli_stmt_free_result($stmt);
       mysqli_close($this->connection);
 
-  }  
+  }
 
     public function getRelatedEntities($itemID) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
           SELECT DISTINCT
 
 entity.unique_id,
@@ -293,21 +293,21 @@ AND
 attribute.target_entity = ?
 )
 )
-            
+
           "
-     
+
      		);
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'ii', $itemID, $itemID);
       $this->throwExceptionOnError();
 
       mysqli_stmt_execute($stmt);
       $this->throwExceptionOnError();
 
-      
-      
-  
+
+
+
       $rows = array();
       mysqli_stmt_bind_result($stmt, $row->unique_id, $row->name_vern);
 
@@ -323,11 +323,11 @@ attribute.target_entity = ?
 
   }
 
-  
+
   public function getEntitiesByType($searchStr) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
             SELECT
 			entity.unique_id,
 			entity.name_vern,
@@ -341,13 +341,13 @@ attribute.target_entity = ?
 
 			LEFT JOIN type_entity
 			ON type_entity.unique_id = entity.type
-          
+
 			WHERE
 			entity.type = ?
-           
+
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'isiis', $searchStr);
       $this->throwExceptionOnError();
 
@@ -371,17 +371,17 @@ attribute.target_entity = ?
       return $rows;
 
   }
-  
+
 
    public function createAssoci($tar, $ent, $fnamer) {
-   
+
    $type = 45;
    if ($fnamer == "none") {
    	$type = 13;
    }
 	$stmt = mysqli_prepare($this->connection,
 		"
-		
+
 INSERT
 
 INTO
@@ -396,31 +396,31 @@ VALUES
 
 	mysqli_stmt_execute($stmt);
 	$this->throwExceptionOnError();
-	
+
 	$autoid = mysqli_stmt_insert_id($stmt);
-	
+
 	mysqli_stmt_free_result($stmt);
 	mysqli_close($this->connection);
-	
+
 	return $autoid;
   }
 
    public function createEntity($item) {	$stmt = mysqli_prepare($this->connection,		"INSERT INTO entity (
-			unique_id,name_vern,type,source_id) 
+			unique_id,name_vern,type,source_id)
 		VALUES (?, ?, ?, ?)");	$this->throwExceptionOnError();
-	
+
 	mysqli_bind_param($stmt, 'isii', $item->unique_id, $item->name_vern,		$item->type, $item->source_id
 	);	$this->throwExceptionOnError();
 
 	mysqli_stmt_execute($stmt);	$this->throwExceptionOnError();
-	
+
 	$autoid = mysqli_stmt_insert_id($stmt);
-	
-	mysqli_stmt_free_result($stmt);	mysqli_close($this->connection);	
+
+	mysqli_stmt_free_result($stmt);	mysqli_close($this->connection);
 	return $autoid;  }
 
   public function deleteEntity($itemID) {	$stmt = mysqli_prepare($this->connection,		"DELETE FROM entity WHERE id = ?");	$this->throwExceptionOnError();
-	
+
 	mysqli_bind_param($stmt, 'i', $itemID);
 	mysqli_stmt_execute($stmt);	$this->throwExceptionOnError();
 	mysqli_stmt_free_result($stmt);	mysqli_close($this->connection);  }
@@ -438,7 +438,7 @@ VALUES
 public function getNarratives($entityID) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
 		SELECT DISTINCT
 
 		attribute.data_char
@@ -458,15 +458,15 @@ public function getNarratives($entityID) {
 		OR
 
 		attribute.target_entity =? )
-		
+
 		ORDER BY
-		
+
 		attribute.unique_id
-          
-           
+
+
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'ii', $entityID, $entityID);
       $this->throwExceptionOnError();
 
@@ -487,19 +487,19 @@ public function getNarratives($entityID) {
       return $rows;
 
   }
-  
+
     public function deleteAssoc($assocID) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
   DELETE
-  
+
   FROM
-  
+
   attribute
-  
+
   WHERE
-  
+
   attribute.unique_id = ".$assocID);
 
            $this->throwExceptionOnError();
@@ -512,12 +512,12 @@ public function getNarratives($entityID) {
       mysqli_close($this->connection);
 
   }
-     
-  
+
+
   public function imageAssoc($imname) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
   SELECT DISTINCT
 
 attribute.unique_id,
@@ -540,7 +540,7 @@ attribute.data_char = ?
 
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 's', $imname);
       $this->throwExceptionOnError();
 
@@ -561,8 +561,8 @@ attribute.data_char = ?
       return $rows;
 
   }
-  
-  
+
+
 
 public function searchNarratives($name_vern) {
 
@@ -572,13 +572,13 @@ $substringArray = explode (" ", $name_vern);
 $max = count($substringArray);
 $process = "'";
 while ($q < $max) {
-	
+
 	//$slashString = str_replace("'", "", $substringArray[$q]);
 	$slashString = addslashes($substringArray[$q]);
-	
+
 	$process = $process . "+" . $slashString;
 	$process = $process . ",";
-	$substringArray[$q] = $process;	
+	$substringArray[$q] = $process;
 	$q++;
 }
 $procLength = strlen($process) - 1;
@@ -589,7 +589,7 @@ $process = "\"%".$name_vern."%\"";
 
      $stmt = mysqli_prepare($this->connection,
           "
-select 
+select
 entity.name_vern,
 attribute.data_char
 
@@ -603,14 +603,14 @@ ON entity.unique_id = attribute.entity_id
 WHERE
 
 attribute.data_char LIKE (".$process.")
-           
+
            ");
       $this->throwExceptionOnError();
-          
+
 //      mysqli_stmt_bind_param($stmt, 's', $name_vern);
 //      $this->throwExceptionOnError();
 //MATCH (attribute.data_char) AGAINST (".$process." in boolean mode)
-      
+
       mysqli_stmt_execute($stmt);
       $this->throwExceptionOnError();
 
@@ -630,12 +630,12 @@ attribute.data_char LIKE (".$process.")
   }
 
   public function getImDir(){
-  
+
           $dir = "images/";
-    
+
     $rows = array();
     $bupkis = 'fnamer';
-    
+
     if (is_dir($dir)) {
     if ($dh = opendir($dir)) {
     $q = 0;
@@ -643,14 +643,14 @@ attribute.data_char LIKE (".$process.")
             $rest = strtolower(substr($file, -3));
             $imageTypes = array("jpg", "png");
             if (strlen($rest) > 3) {
-            
+
             }
             if (in_array($rest, $imageTypes))  {
             	$book = new stdClass;
             	$book->fnamer=$file;
-              	$rows[] = $book;            	
+              	$rows[] = $book;
             	$q++;
-            	
+
             }
      }
         }
@@ -658,9 +658,9 @@ attribute.data_char LIKE (".$process.")
     }
 
 	return $rows;
-	
+
   }
-  
+
 public function getImages($imageEntity) {
     $stmt = mysqli_prepare($this->connection,
           "
@@ -699,10 +699,10 @@ attribute.target_entity =?)
 
 ORDER BY
 attribute.data_char
-           
+
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'ii', $imageEntity, $imageEntity);
       $this->throwExceptionOnError();
 
@@ -714,19 +714,19 @@ attribute.data_char
 
       $dupcheck = "No";
       while (mysqli_stmt_fetch($stmt)) {
-      
-        $rows[] = $row;  
+
+        $rows[] = $row;
           $row = new stdClass();
           mysqli_stmt_bind_result($stmt, $row->data_char, $row->entity_id, $row->ent_id_type, $row->target_entity, $row->tar_ent_type, $row->name_dat);
       	$dupcheck = $row->data_char;
       }
-      
+
       $q = 0;
       $r = 0;
       $rows_f = array();
       $dupe = "box";
       while ($q < count($rows)) {
-      
+
       if ($dupe == $rows[$q]->data_char)
       {
       }
@@ -735,22 +735,22 @@ attribute.data_char
       	$r++;
       }
       $dupe = $rows[$q]->data_char;
-      
-      $q++;      
+
+      $q++;
       }
-      
-      
+
+
       mysqli_stmt_free_result($stmt);
       mysqli_close($this->connection);
 
       return $rows_f;
 
   }
-  
+
   public function getSelectionImages($imageEntity) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
 SELECT DISTINCT
 
 attribute.data_char,
@@ -783,10 +783,10 @@ OR
 attribute.target_entity =?
 )
 
-           
+
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'ii', $imageEntity, $imageEntity);
       $this->throwExceptionOnError();
 
@@ -806,12 +806,12 @@ attribute.target_entity =?
 
       return $rows;
   }
-  
-  
+
+
   public function getLatLong($latlongEntity) {
      $stmt = mysqli_prepare($this->connection,
           "
-          
+
 SELECT DISTINCT
 
 entity.name_vern,
@@ -870,11 +870,11 @@ OR
 
 atllat.entity_id = ANY (SELECT attribute.target_entity FROM attribute WHERE attribute.entity_id =?)
 )
-          
-           
+
+
            ");
       $this->throwExceptionOnError();
-          
+
       mysqli_stmt_bind_param($stmt, 'iiiiii', $latlongEntity, $latlongEntity, $latlongEntity, $latlongEntity, $latlongEntity, $latlongEntity);
       $this->throwExceptionOnError();
 
@@ -894,21 +894,21 @@ atllat.entity_id = ANY (SELECT attribute.target_entity FROM attribute WHERE attr
 
       return $rows;
   }
-  
-  
-/** 
-  * Utitity function to throw an exception if an error occurs 
-  * while running a mysql command. 
-  */ 
-  private function throwExceptionOnError($link = null) { 
-    if($link == null) { 
-      $link = $this->connection; 
-    } 
-    if(mysqli_error($link)) { 
-      $msg = mysqli_errno($link) . ": " . mysqli_error($link); 
-      throw new Exception('MySQL Error - '. $msg); 
-    }         
-  } 
- 
-} 
+
+
+/**
+  * Utitity function to throw an exception if an error occurs
+  * while running a mysql command.
+  */
+  private function throwExceptionOnError($link = null) {
+    if($link == null) {
+      $link = $this->connection;
+    }
+    if(mysqli_error($link)) {
+      $msg = mysqli_errno($link) . ": " . mysqli_error($link);
+      throw new Exception('MySQL Error - '. $msg);
+    }
+  }
+
+}
 ?>
