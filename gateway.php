@@ -3,7 +3,7 @@ ini_set("display_errors", 1);
 $dir = dirname(__FILE__);
 $webroot = '/var/www/html'
 // $webroot = $_SERVER['DOCUMENT_ROOT'];
-$configfile = "/var/www/html/authlondon/amf_config.ini";
+$configfile = "/var/www/html/litlondon/amf_config.ini";
 // $configfile = "$dir/amf_config.ini";
 
 //default zend install directory
