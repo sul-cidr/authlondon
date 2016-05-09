@@ -1,8 +1,10 @@
 <?php
 ini_set("display_errors", 1);
 $dir = dirname(__FILE__);
-$webroot = $_SERVER['DOCUMENT_ROOT'];
-$configfile = "$dir/amf_config.ini";
+$webroot = '/var/www/html'
+// $webroot = $_SERVER['DOCUMENT_ROOT'];
+$configfile = "/var/www/html/litlondon/amf_config.ini";
+// $configfile = "$dir/amf_config.ini";
 
 //default zend install directory
 $zenddir = $webroot. '/ZendFramework/library';
@@ -24,7 +26,8 @@ if(file_exists($configfile)) {
 	//add zend directory to include path
 set_include_path(get_include_path().PATH_SEPARATOR.$zenddir);
 // Initialize Zend Framework loader
-require_once 'Zend/Loader/Autoloader.php';
+require_once $zenddir . '/Zend/Loader/Autoloader.php';
+// require_once 'Zend/Loader/Autoloader.php';
 Zend_Loader_Autoloader::getInstance();
 // Load configuration
 $default_config = new Zend_Config(array("production" => false), true);
@@ -40,23 +43,23 @@ $server->setProduction($amf->production);
 if(isset($amf->directories)) {
 	$dirs = $amf->directories->toArray();
 	foreach($dirs as $dir) {
-	    // get the first character of the path. 
+	    // get the first character of the path.
 	    // If it does not start with slash then it implies that the path is relative to webroot. Else it will be treated as absolute path
 	    $length = strlen($dir);
 	    $firstChar = $dir;
 	    if($length >= 1)
 	    	$firstChar = $dir[0];
-	    
+
 	    if($firstChar != "/"){
 	    	// if the directory is ./ path then we add the webroot only.
-	    	if($dir == "./"){	    		
+	    	if($dir == "./"){
 	    		$server->addDirectory($webroot);
 	    	}else{
 	    		$tempPath = $webroot . "/" . $dir;
 				$server->addDirectory($tempPath);
-			}	    
+			}
 		}else{
-	   		$server->addDirectory($dir);	    	
+	   		$server->addDirectory($dir);
 		}
 	}
 }
