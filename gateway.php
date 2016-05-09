@@ -7,14 +7,14 @@ $configfile = "/var/www/html/litlondon/amf_config.ini";
 // $configfile = "$dir/amf_config.ini";
 
 //default zend install directory
-$zenddir = $webroot. '/ZendFramework/library';
-
+$zenddir = $webroot . '/ZendFramework/library';
+echo $zendir;
 //Load ini file and locate zend directory
 if(file_exists($configfile)) {
 	$arr=parse_ini_file($configfile,true);
 	if(isset($arr['zend']['webroot'])){
 		$webroot = $arr['zend']['webroot'];
-		$zenddir = $webroot. '/ZendFramework/library';
+		$zenddir = $webroot . '/ZendFramework/library';
 	}
 	if(isset($arr['zend']['zend_path'])){
 		$zenddir = $arr['zend']['zend_path'];
